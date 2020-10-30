@@ -15,7 +15,7 @@ from target_lstm import TARGET_LSTM
 import pickle
 
 #########################################################################################
-#  Generator  Hyper-parameters
+#  生成器のパラメータ
 ######################################################################################
 EMB_DIM = 32 # embedding dimension
 HIDDEN_DIM = 32 # hidden state dimension of lstm cell
@@ -26,7 +26,7 @@ SEED = 88
 BATCH_SIZE = 64
 
 #########################################################################################
-#  Discriminator  Hyper-parameters
+#  識別器のパラメータ
 #########################################################################################
 dis_embedding_dim = 64
 dis_filter_sizes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20]
@@ -37,11 +37,18 @@ dis_batch_size = 64
 
 #########################################################################################
 #  Basic Training Parameters
+# GANの学習を実行していく
 #########################################################################################
-TOTAL_BATCH = 200
+
+TOTAL_BATCH = 200 # バッチサイズ
+
+# 学習で使用するデータ
+# 最初は存在しないので、lstmで作るらしい
 positive_file = 'save/real_data.txt'
 negative_file = 'save/generator_sample.txt'
 eval_file = 'save/eval_file.txt'
+
+# 生成された数
 generated_num = 10000
 
 def main():
@@ -57,20 +64,25 @@ def main():
         for dev in physical_devices:
             tf.config.experimental.set_memory_growth(dev, True)
 
+    # 生成器で学習
     generator = Generator(vocab_size, BATCH_SIZE, EMB_DIM, HIDDEN_DIM, SEQ_LENGTH, START_TOKEN)
     target_params = pickle.load(open('save/target_params_py3.pkl', 'rb'))
     target_lstm = TARGET_LSTM(BATCH_SIZE, SEQ_LENGTH, START_TOKEN, target_params) # The oracle model
 
+    # 識別器で学習
     discriminator = Discriminator(sequence_length=SEQ_LENGTH, num_classes=2, vocab_size=vocab_size, embedding_size=dis_embedding_dim,
                                   filter_sizes=dis_filter_sizes, num_filters=dis_num_filters, dropout_keep_prob=dis_dropout_keep_prob,
                                   l2_reg_lambda=dis_l2_reg_lambda)
 
     # First, use the oracle model to provide the positive examples, which are sampled from the oracle data distribution
+    # GANの学習で使用する正解データを作成する
     if not os.path.exists(positive_file):
         target_lstm.generate_samples(generated_num // BATCH_SIZE, positive_file)
     gen_dataset = dataset_for_generator(positive_file, BATCH_SIZE)
     log = open('save/experiment-log.txt', 'w')
-    #  pre-train generator
+
+
+    #  事前学習での文章生成をlstmで行い、生成器の重みを保存する
     if not os.path.exists("generator_pretrained.h5"):
         print('Start pre-training...')
         log.write('pre-training...\n')
@@ -79,13 +91,21 @@ def main():
     else:
         generator.load("generator_pretrained.h5")
 
+    # 識別器の事前学習での重み
     if not os.path.exists("discriminator_pretrained.h5"):
         print('Start pre-training discriminator...')
         # Train 3 epoch on the generated data and do this for 50 times
+        # 3エポックの識別器の訓練を５０回繰り返す
         for _ in range(50):
             print("Dataset", _)
+
+            # まず生成器が偽物を作成
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
+
+            # 偽物と本物を混ぜたデータセットを作成
             dis_dataset = dataset_for_discriminator(positive_file, negative_file, BATCH_SIZE)
+
+            # 識別器を学習させる
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
         discriminator.save("discriminator_pretrained.h5")
     else:
@@ -96,6 +116,9 @@ def main():
     print('#########################################################################')
     print('Start Adversarial Training...')
     log.write('adversarial training...\n')
+
+    # 学習の実行
+    # 今回は200回の訓練を行う
     for total_batch in range(TOTAL_BATCH):
         print("Generator", total_batch)
         # Train the generator for one step
