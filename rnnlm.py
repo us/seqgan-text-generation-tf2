@@ -14,6 +14,8 @@ class RNNLM(object):
         self.learning_rate = learning_rate
         self.grad_clip = 5.0
 
+        # LSTMのモデルを作成
+        # 1層のLSTM
         self.g_model = tf.keras.models.Sequential([
             Input((self.sequence_length,), dtype=tf.int32),
             Embedding(self.num_emb, self.emb_dim, embeddings_initializer=tf.random_normal_initializer(stddev=0.1)),
