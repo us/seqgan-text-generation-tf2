@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Layer, Input, Dense, Embedding, Conv1D, MaxPool1D, Concatenate, Flatten, Dropout
 
+# これはどこで使う？ →　discriminatorで使ってた
 class Highway(Model):
     def __init__(self, **kwargs):
         super(Highway, self).__init__(**kwargs)
@@ -22,6 +23,8 @@ class Discriminator(object):
     A CNN for text classification.
     Uses an embedding layer, followed by a convolutional, max-pooling and softmax layer.
     """
+    # テキスト分類のCNN
+    # レイヤーは、embedding, conv, max-pooling, softmaxの４つ
 
     def __init__(
             self, sequence_length, num_classes, vocab_size,
@@ -32,10 +35,12 @@ class Discriminator(object):
         self.vocab_size = vocab_size
         self.embedding_size = embedding_size
 
+        # 入力側のモデルを作成
         layer_input = Input((sequence_length,), dtype=tf.int32)
         layer_emb = Embedding(vocab_size, embedding_size, embeddings_initializer=tf.random_uniform_initializer(-1.0, 1.0))(layer_input)
         # (None, sequence_length, embedding_size)
 
+        # 出力側のモデルを作成
         pooled_outputs = []
         for filter_size, num_filter in zip(filter_sizes, num_filters):
             x = Conv1D(num_filter, filter_size)(layer_emb) # (None, sequence_length - filter_size + 1, num_filter)
@@ -51,10 +56,12 @@ class Discriminator(object):
                              bias_regularizer=tf.keras.regularizers.l2(l2_reg_lambda),
                              activation="softmax")(x)
 
+        # 作ったモデルを合わせる
         self.d_model = Model(layer_input, layer_output)
         d_optimizer = tf.keras.optimizers.Adam(1e-4)
         self.d_model.compile(optimizer=d_optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
 
+    # 学習の実行
     def train(self, dataset, num_epochs, num_steps, **kwargs):
         # dataset: ([None, sequence_length], [None, num_classes])
         return self.d_model.fit(dataset.repeat(num_epochs), verbose=1, epochs=num_epochs, steps_per_epoch=num_steps, **kwargs)
