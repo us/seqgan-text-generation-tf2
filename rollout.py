@@ -3,6 +3,7 @@ import numpy as np
 from rnnlm import RNNLM
 
 class ROLLOUT(RNNLM):
+    # LSTMのモデルを持って来る
     def __init__(self, lstm, update_rate):
         super(ROLLOUT, self).__init__(lstm.num_emb, lstm.batch_size, lstm.emb_dim, lstm.hidden_dim, lstm.sequence_length, lstm.start_token)
         self.lstm = lstm
@@ -59,6 +60,7 @@ class ROLLOUT(RNNLM):
         outputs = tf.transpose(gen_x.stack(), perm=[1, 0])  # batch_size x seq_length
         return outputs
 
+    # GANの重みを更新する
     def get_reward(self, input_x, rollout_num, discriminator):
         rewards = []
         for i in range(rollout_num):
