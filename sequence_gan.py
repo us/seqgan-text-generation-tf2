@@ -53,6 +53,9 @@ negative_file = 'save/generator_sample.txt'
 # このファイルはどうした？
 eval_file = 'save/eval_file.txt'
 
+# 最後にgeneratorに生成させたもの
+output_file = 'save/output_file.txt'
+
 # 生成された数
 generated_num = 10000
 
@@ -153,6 +156,8 @@ def main():
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
     generator.save("generator.h5")
     discriminator.save("discriminator.h5")
+    
+    generator.generate_samples(generated_num // BATCH_SIZE, output_file)
 
     log.close()
 
