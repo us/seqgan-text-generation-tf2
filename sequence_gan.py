@@ -44,7 +44,7 @@ TOTAL_BATCH = 200 # バッチサイズ
 
 # 学習で使用するデータ
 # 最初は存在しないので、lstmで作るらしい
-positive_file = 'save/hakataeki_haiku2id.txt'
+positive_file = 'save/hakataeki_haiku2id_re.txt'
 negative_file = 'save/generator_sample.txt'
 # このファイルはどうした？
 eval_file = 'save/eval_file.txt'
