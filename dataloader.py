@@ -9,7 +9,7 @@ def dataset_for_generator(data_file, batch_size):
             parse_line = [int(x) for x in line]
             
             if len(parse_line) == 20:
-#             token_stream.append(parse_line)
+                token_stream.append(parse_line)
     
     return tf.data.Dataset.from_tensor_slices(token_stream).shuffle(len(token_stream)).batch(batch_size)
 
