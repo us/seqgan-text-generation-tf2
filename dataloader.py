@@ -11,7 +11,9 @@ def dataset_for_generator(data_file, batch_size):
             # 今回は文字列の長さは指定しないので
 #             if len(parse_line) == 20:
             token_stream.append(parse_line)
-    return tf.data.Dataset.from_tensor_slices(token_stream).shuffle(len(token_stream)).batch(batch_size)
+    
+    data = tf.ragged.constant(token_stream)
+    return tf.data.Dataset.from_tensor_slices(data).shuffle(len(token_stream)).batch(batch_size)
 
 def dataset_for_discriminator(positive_file, negative_file, batch_size):
     examples = []
