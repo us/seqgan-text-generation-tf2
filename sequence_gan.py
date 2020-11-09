@@ -112,7 +112,7 @@ def main():
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
 
             # 偽物と本物を混ぜたデータセットを作成
-            dis_dataset = dataset_for_discriminator(dis_positive_file, negative_file, BATCH_SIZE)
+            dis_dataset = dataset_for_discriminator(positive_file, negative_file, BATCH_SIZE)
 
             # 識別器を学習させる
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
@@ -152,7 +152,7 @@ def main():
         print("Discriminator", total_batch)
         for _ in range(5):
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
-            dis_dataset = dataset_for_discriminator(dis_positive_file, negative_file, BATCH_SIZE)
+            dis_dataset = dataset_for_discriminator(positive_file, negative_file, BATCH_SIZE)
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
     generator.save("generator.h5")
     discriminator.save("discriminator.h5")
