@@ -40,7 +40,7 @@ dis_batch_size = 64
 # GANの学習を実行していく
 #########################################################################################
 
-TOTAL_BATCH = 2000 # 生成器と識別器の訓練を何セット行うか
+TOTAL_BATCH = 200 # 生成器と識別器の訓練を何セット行うか
 
 # 学習で使用するデータ
 
@@ -127,7 +127,7 @@ def main():
     log.write('adversarial training...\n')
 
     # 学習の実行
-    # 今回は2000回の訓練を行う
+    # 今回は200回の訓練を行う
     for total_batch in range(TOTAL_BATCH):
         print("Generator", total_batch)
         # Train the generator for one step
