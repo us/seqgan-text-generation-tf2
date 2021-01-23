@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Embedding, Dense, LSTM
+from tensorflow.keras.layers import Input, Embedding, Dense, LSTM
 import numpy as np
 from rnnlm import RNNLM
 from dataloader import dataset_for_generator
@@ -30,8 +31,8 @@ class Generator(RNNLM):
                 likelihood_dataset = dataset_for_generator(eval_file, self.batch_size)
                 test_loss = target_lstm.target_loss(likelihood_dataset)
                 print('pre-train epoch ', epoch, 'test_loss ', test_loss)
-                buffer = 'epoch:\t'+ str(epoch) + '\tnll:\t' + str(test_loss) + '\n'
-                log.write(buffer)
+                # buffer = 'epoch:\t'+ str(epoch) + '\tnll:\t' + str(test_loss) + '\n'
+                # log.write(buffer)
 
         ds = dataset.map(lambda x: (tf.pad(x[:, 0:-1], ([0, 0], [1, 0]), "CONSTANT", self.start_token), x)).repeat(num_epochs)
         # 事前学習の実行

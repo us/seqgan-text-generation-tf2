@@ -1,6 +1,5 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Embedding, Dense, LSTM, Flatten
-import numpy as np
 
 class RNNLM(object):
     def __init__(self, num_emb, batch_size, emb_dim, hidden_dim, sequence_length, start_token, learning_rate=0.01):

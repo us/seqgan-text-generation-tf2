@@ -1,6 +1,7 @@
 import numpy as np
 from rnnlm import RNNLM
 
+
 class TARGET_LSTM(RNNLM):
     # function for reading save/target_params.pkl
     # save/target_params.pklを読み込むための機能
@@ -16,9 +17,9 @@ class TARGET_LSTM(RNNLM):
             # Embedding
             params[0],
             # LSTM
-            np.c_[params[1], params[4], params[10], params[7]], # kernel (i, f, c, o)
-            np.c_[params[2], params[5], params[11], params[8]], # recurrent_kernel
-            np.r_[params[3], params[6], params[12], params[9]], # bias
+            np.c_[params[1], params[4], params[10], params[7]],  # kernel (i, f, c, o)
+            np.c_[params[2], params[5], params[11], params[8]],  # recurrent_kernel
+            np.r_[params[3], params[6], params[12], params[9]],  # bias
             # Dense
             params[13],
             params[14]

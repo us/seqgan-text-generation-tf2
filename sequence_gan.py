@@ -40,21 +40,21 @@ dis_batch_size = 64
 # GANの学習を実行していく
 #########################################################################################
 
-TOTAL_BATCH = 200 # 生成器と識別器の訓練を何セット行うか
+TOTAL_BATCH = 30 # 生成器と識別器の訓練を何セット行うか
 
 # 学習で使用するデータ
 
 # 博多駅のレビューから作った俳句のid列
-positive_file = 'save/hakataeki_haiku2id_re.txt'
+positive_file = 'dataset/positives.txt'
 # 実際の俳句のid列
-dis_positive_file = 'save/haiku2id_re.txt'
+# dis_positive_file = 'save/haiku2id_re.txt'
 # generatorが作った偽物の俳句
-negative_file = 'save/generator_sample.txt'
+negative_file = 'dataset/negatives.txt'
 # このファイルはどうした？
-eval_file = 'save/eval_file.txt'
+eval_file = 'dataset/eval_file.txt'
 
 # 最後にgeneratorに生成させたもの
-output_file = 'save/output_file.txt'
+output_file = 'dataset/output_file.txt'
 
 # 生成された数
 generated_num = 10000
@@ -75,7 +75,7 @@ def main():
     # 生成器の初期設定
     generator = Generator(vocab_size, BATCH_SIZE, EMB_DIM, HIDDEN_DIM, SEQ_LENGTH, START_TOKEN)
     # 最初のパラメータをpicklファイルから参照
-    target_params = pickle.load(open('save/target_params_py3.pkl', 'rb'))
+    target_params = pickle.load(open('dataset/target_params_py3.pkl', 'rb'))
     target_lstm = TARGET_LSTM(BATCH_SIZE, SEQ_LENGTH, START_TOKEN, target_params) # The oracle model
 
     # 識別器の初期設定
@@ -88,7 +88,7 @@ def main():
     if not os.path.exists(positive_file):
         target_lstm.generate_samples(generated_num // BATCH_SIZE, positive_file)
     gen_dataset = dataset_for_generator(positive_file, BATCH_SIZE)
-    log = open('save/experiment-log.txt', 'w')
+    log = open('dataset/experiment-log.txt', 'w')
 
 
     #  事前学習での文章生成をlstmで行い、生成器の重みを保存する
