@@ -55,7 +55,7 @@ def tokenize(arr):
     tokenizer.fit_on_texts(arr)
     tensor = tokenizer.texts_to_sequences(arr)
     tensor = tf.keras.preprocessing.sequence.pad_sequences(tensor,
-                                                           padding='post')
+                                                           padding='post', maxlen=20)
 
     # saving
     with open('tokenizer.pickle', 'wb') as handle:
@@ -72,6 +72,7 @@ def tokenize(arr):
 
 d = split_and_clean(df)
 d = tokenize(d)
+print(d.shape)
 
 np.savetxt('dataset/positives.txt', d[:10000], delimiter=' ', fmt='%i')  # X is an array
 np.savetxt('dataset/negatives.txt', d[10000:20000], delimiter=' ', fmt='%i')  # X is an array
