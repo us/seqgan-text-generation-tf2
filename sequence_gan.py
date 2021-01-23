@@ -51,7 +51,7 @@ positive_file = 'dataset/positives.txt'
 # generatorが作った偽物の俳句
 negative_file = 'dataset/negatives.txt'
 # このファイルはどうした？
-eval_file = 'dataset/eval_file.txt'
+eval_file = 'dataset/evals.txt'
 
 # 最後にgeneratorに生成させたもの
 output_file = 'dataset/output_file.txt'

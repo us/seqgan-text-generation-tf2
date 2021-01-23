@@ -51,7 +51,7 @@ def split_and_clean(data):
 
 
 def tokenize(arr):
-    tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='')
+    tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='', num_words=5000)
     tokenizer.fit_on_texts(arr)
     tensor = tokenizer.texts_to_sequences(arr)
     tensor = tf.keras.preprocessing.sequence.pad_sequences(tensor,
