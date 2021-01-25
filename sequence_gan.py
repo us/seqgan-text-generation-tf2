@@ -58,6 +58,8 @@ output_file = 'dataset/output_file.txt'
 
 # 生成された数
 generated_num = 10000
+vocab_size = 20000
+
 
 def main():
     random.seed(SEED)
@@ -65,7 +67,7 @@ def main():
     tf.random.set_seed(SEED)
     assert START_TOKEN == 0
 
-    vocab_size = 5000
+    vocab_size = 20000
 
     physical_devices = tf.config.experimental.list_physical_devices("GPU")
     if len(physical_devices) > 0:
@@ -137,13 +139,13 @@ def main():
             generator.train_step(samples, rewards)
 
         # Test
-        if total_batch % 5 == 0 or total_batch == TOTAL_BATCH - 1:
-            generator.generate_samples(generated_num // BATCH_SIZE, eval_file)
-            likelihood_dataset = dataset_for_generator(eval_file, BATCH_SIZE)
-            test_loss = target_lstm.target_loss(likelihood_dataset)
-            buffer = 'epoch:\t' + str(total_batch) + '\tnll:\t' + str(test_loss) + '\n'
-            print('total_batch: ', total_batch, 'test_loss: ', test_loss)
-            log.write(buffer)
+        # if total_batch % 5 == 0 or total_batch == TOTAL_BATCH - 1:
+            # generator.generate_samples(generated_num // BATCH_SIZE, eval_file)
+            # likelihood_dataset = dataset_for_generator(eval_file, BATCH_SIZE)
+            # test_loss = target_lstm.target_loss(likelihood_dataset)
+        buffer = '___epoch:\t' + str(total_batch) + '\tnll:\t' + str(rewards) + '\n'
+        print('total_batch: ', total_batch, 'test_loss: ', rewards)
+        log.write(buffer)
 
         # Update roll-out parameters
         rollout.update_params()
