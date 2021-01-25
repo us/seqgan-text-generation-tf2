@@ -3,3 +3,4 @@ virev
 .DS_Store
 dataset/IMDB Dataset.csv
 .idea/
+__pycache__/

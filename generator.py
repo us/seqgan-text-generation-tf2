@@ -20,19 +20,19 @@ class Generator(RNNLM):
             sample_weight_mode="temporal")
 
 # 事前学習用のモデル
-    def pretrain(self, dataset, target_lstm, num_epochs, num_steps, eval_file):
+    def pretrain(self, dataset, num_epochs, num_steps):
         # dataset: each element has [self.batch_size, self.sequence_length]
         # outputs are 1 timestep ahead
         
         # 途中経過を表示
         def pretrain_callback(epoch, logs):
             if epoch % 5 == 0:
-                self.generate_samples(num_steps, eval_file)
-                likelihood_dataset = dataset_for_generator(eval_file, self.batch_size)
-                test_loss = target_lstm.target_loss(likelihood_dataset)
-                print('pre-train epoch ', epoch, 'test_loss ', test_loss)
-                # buffer = 'epoch:\t'+ str(epoch) + '\tnll:\t' + str(test_loss) + '\n'
-                # log.write(buffer)
+                # self.generate_samples(num_steps, eval_file)
+                # likelihood_dataset = dataset_for_generator(eval_file, self.batch_size)
+                # test_loss = target_lstm.target_loss(likelihood_dataset)
+                print('pre-train epoch ', epoch, 'test_loss ', "-")
+                buffer = 'epoch:\t'+ str(epoch) + '\tnll:\t' + "-" + '\n'
+                logs.write(buffer)
 
         ds = dataset.map(lambda x: (tf.pad(x[:, 0:-1], ([0, 0], [1, 0]), "CONSTANT", self.start_token), x)).repeat(num_epochs)
         # 事前学習の実行

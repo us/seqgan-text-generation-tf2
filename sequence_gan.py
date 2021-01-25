@@ -75,8 +75,8 @@ def main():
     # 生成器の初期設定
     generator = Generator(vocab_size, BATCH_SIZE, EMB_DIM, HIDDEN_DIM, SEQ_LENGTH, START_TOKEN)
     # 最初のパラメータをpicklファイルから参照
-    target_params = pickle.load(open('dataset/target_params_py3.pkl', 'rb'))
-    target_lstm = TARGET_LSTM(BATCH_SIZE, SEQ_LENGTH, START_TOKEN, target_params) # The oracle model
+    # target_params = pickle.load(open('dataset/target_params_py3.pkl', 'rb'))
+    # target_lstm = TARGET_LSTM(BATCH_SIZE, SEQ_LENGTH, START_TOKEN, target_params) # The oracle model
 
     # 識別器の初期設定
     discriminator = Discriminator(sequence_length=SEQ_LENGTH, num_classes=2, vocab_size=vocab_size, embedding_size=dis_embedding_dim,
@@ -85,8 +85,8 @@ def main():
 
     # First, use the oracle model to provide the positive examples, which are sampled from the oracle data distribution
     # GANの学習で使用する正解データを作成する
-    if not os.path.exists(positive_file):
-        target_lstm.generate_samples(generated_num // BATCH_SIZE, positive_file)
+    # if not os.path.exists(positive_file):
+    #     target_lstm.generate_samples(generated_num // BATCH_SIZE, positive_file)
     gen_dataset = dataset_for_generator(positive_file, BATCH_SIZE)
     log = open('dataset/experiment-log.txt', 'w')
 
@@ -95,7 +95,7 @@ def main():
     if not os.path.exists("generator_pretrained.h5"):
         print('Start pre-training...')
         log.write('pre-training...\n')
-        generator.pretrain(gen_dataset, target_lstm, PRE_EPOCH_NUM, generated_num // BATCH_SIZE, eval_file)
+        generator.pretrain(gen_dataset, PRE_EPOCH_NUM, generated_num // BATCH_SIZE)
         generator.save("generator_pretrained.h5")
     else:
         generator.load("generator_pretrained.h5")
