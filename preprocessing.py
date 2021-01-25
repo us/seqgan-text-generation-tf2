@@ -42,8 +42,9 @@ def split_and_clean(data):
     for i in data:
         sentences = i.split('.')
         for s in sentences:
-            if len(s.split()) < 21:
+            if 10 < len( s.split()) < 21:
                 if s:
+                    print(s.split)
                     arr.append(s)
     for i, j in enumerate(arr):
         arr[i] = clean_text(arr[i])

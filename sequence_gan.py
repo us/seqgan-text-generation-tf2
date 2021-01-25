@@ -3,7 +3,7 @@
 
 import numpy as np
 import tensorflow as tf
-#tf.disable_v2_behavior()
+# tf.disable_v2_behavior()
 
 import os
 import random
@@ -11,17 +11,15 @@ from dataloader import dataset_for_generator, dataset_for_discriminator
 from generator import Generator
 from discriminator import Discriminator
 from rollout import ROLLOUT
-from target_lstm import TARGET_LSTM
-import pickle
 
 #########################################################################################
 #  生成器のパラメータ
 ######################################################################################
-EMB_DIM = 32 # embedding dimension
-HIDDEN_DIM = 32 # hidden state dimension of lstm cell
-SEQ_LENGTH = 20 # sequence length
+EMB_DIM = 32  # embedding dimension
+HIDDEN_DIM = 32  # hidden state dimension of lstm cell
+SEQ_LENGTH = 20  # sequence length
 START_TOKEN = 0
-PRE_EPOCH_NUM = 120 # supervise (maximum likelihood estimation) epochs
+PRE_EPOCH_NUM = 120  # supervise (maximum likelihood estimation) epochs
 SEED = 88
 BATCH_SIZE = 64
 
@@ -40,7 +38,7 @@ dis_batch_size = 64
 # GANの学習を実行していく
 #########################################################################################
 
-TOTAL_BATCH = 30 # 生成器と識別器の訓練を何セット行うか
+TOTAL_BATCH = 30  # 生成器と識別器の訓練を何セット行うか
 
 # 学習で使用するデータ
 
@@ -81,8 +79,10 @@ def main():
     # target_lstm = TARGET_LSTM(BATCH_SIZE, SEQ_LENGTH, START_TOKEN, target_params) # The oracle model
 
     # 識別器の初期設定
-    discriminator = Discriminator(sequence_length=SEQ_LENGTH, num_classes=2, vocab_size=vocab_size, embedding_size=dis_embedding_dim,
-                                  filter_sizes=dis_filter_sizes, num_filters=dis_num_filters, dropout_keep_prob=dis_dropout_keep_prob,
+    discriminator = Discriminator(sequence_length=SEQ_LENGTH, num_classes=2, vocab_size=vocab_size,
+                                  embedding_size=dis_embedding_dim,
+                                  filter_sizes=dis_filter_sizes, num_filters=dis_num_filters,
+                                  dropout_keep_prob=dis_dropout_keep_prob,
                                   l2_reg_lambda=dis_l2_reg_lambda)
 
     # First, use the oracle model to provide the positive examples, which are sampled from the oracle data distribution
@@ -91,7 +91,6 @@ def main():
     #     target_lstm.generate_samples(generated_num // BATCH_SIZE, positive_file)
     gen_dataset = dataset_for_generator(positive_file, BATCH_SIZE)
     log = open('dataset/experiment-log.txt', 'w')
-
 
     #  事前学習での文章生成をlstmで行い、生成器の重みを保存する
     if not os.path.exists("generator_pretrained.h5"):
@@ -140,12 +139,12 @@ def main():
 
         # Test
         # if total_batch % 5 == 0 or total_batch == TOTAL_BATCH - 1:
-            # generator.generate_samples(generated_num // BATCH_SIZE, eval_file)
-            # likelihood_dataset = dataset_for_generator(eval_file, BATCH_SIZE)
-            # test_loss = target_lstm.target_loss(likelihood_dataset)
-        buffer = '___epoch:\t' + str(total_batch) + '\tnll:\t' + str(rewards) + '\n'
-        print('total_batch: ', total_batch, 'test_loss: ', rewards)
-        log.write(buffer)
+        # generator. (generated_num // BATCH_SIZE, eval_file)
+        # likelihood_dataset = dataset_for_generator(eval_file, BATCH_SIZE)
+        # test_loss = target_lstm.target_loss(likelihood_dataset)
+        # buffer = '___epoch:\t' + str(total_batch) + '\tnll:\t' + str(rewards) + '\n'
+        # print('total_batch: ', total_batch, 'test_loss: ', rewards)
+        # print(buffer)
 
         # Update roll-out parameters
         rollout.update_params()
@@ -158,7 +157,7 @@ def main():
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
     generator.save("generator.h5")
     discriminator.save("discriminator.h5")
-    
+
     generator.generate_samples(generated_num // BATCH_SIZE, output_file)
 
     log.close()
