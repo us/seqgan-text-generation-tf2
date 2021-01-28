@@ -1,3 +1,15 @@
-seqGANを使った文章生成を行う
+# SeqGan TF2 Implementation For Custom Datasets
 
-使用するデータは観光地のレビューと現代俳句データベースの俳句
+## Installation and Usage
+
+Install requirements.
+```
+pip install -r requirements.txt
+```
+
+Generate dataset for SeqGan from IMDB Dataset.
+```
+python utils/preprocessing.py
+```
+
+

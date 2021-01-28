@@ -1,19 +1,21 @@
 import tensorflow as tf
 
-def dataset_for_generator(data_file, batch_size):
+
+def generator_dataloader(data_file, batch_size):
     token_stream = []
     with open(data_file, 'r') as f:
         for line in f:
             line = line.strip()
             line = line.split()
             parse_line = [int(x) for x in line]
-            
+
             if len(parse_line) == 20:
                 token_stream.append(parse_line)
-    
+
     return tf.data.Dataset.from_tensor_slices(token_stream).shuffle(len(token_stream)).batch(batch_size)
 
-def dataset_for_discriminator(positive_file, negative_file, batch_size):
+
+def discriminator_dataloader(positive_file, negative_file, batch_size):
     examples = []
     labels = []
     with open(positive_file) as fin:
