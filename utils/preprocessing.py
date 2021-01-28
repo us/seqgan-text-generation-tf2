@@ -38,7 +38,6 @@ def split_and_clean(data):
         for s in sentences:
             if 10 < len(s.split()) < 21:
                 if s:
-                    print(s.split)
                     arr.append(s)
     for i, j in enumerate(arr):
         arr[i] = clean_text(arr[i])
@@ -66,6 +65,8 @@ def tokenize(arr):
 
     dump_tokenizer(tokenizer)
     return tensor
+
+
 
 
 if __name__ == "__main__":

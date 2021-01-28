@@ -22,6 +22,7 @@ class Generator(RNN):
         ds = dataset.map(lambda x: (tf.pad(x[:, 0:-1], ([0, 0], [1, 0]), "CONSTANT", 0), x)).repeat(
             num_epochs)
         pretrain_loss = self.generator_model.fit(ds, verbose=1, epochs=num_epochs, steps_per_epoch=num_steps)
+        print("Pretrain generator loss: ", pretrain_loss)
         return pretrain_loss
 
     def train_step(self, x, rewards):
@@ -30,6 +31,7 @@ class Generator(RNN):
             x,
             sample_weight=rewards * self.batch_size * self.sequence_length
         )
+        print("Generator Loss: ", train_loss)
         return train_loss
 
     def _create_optimizer(self, *args, **kwargs):
