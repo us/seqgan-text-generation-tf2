@@ -7,7 +7,7 @@ from models.rnn import RNN
 class ROLLOUT(RNN):
     def __init__(self, lstm, update_rate):
         super(ROLLOUT, self).__init__(lstm.num_emb, lstm.batch_size, lstm.emb_dim, lstm.hidden_dim,
-                                      lstm.sequence_length, lstm.start_token)
+                                      lstm.sequence_length)
         self.lstm = lstm
         self.update_rate = update_rate
         self.generator_model.set_weights(lstm.generator_model.get_weights())
