@@ -25,25 +25,25 @@ if __name__ == "__main__":
     if not os.path.exists("pretrained_models"):
         os.makedirs("pretrained_models")
 
-    if not os.path.exists("pretrained_models/pretrained_generator.h5"):
+    if not os.path.exists(pretrained_generator_file):
         print('Start pre-training generator')
         generator.pretrain(gen_dataset, PRE_EPOCH_NUM, generated_num // BATCH_SIZE)
-        generator.save("pretrained_models/pretrained_generator.h5")
+        generator.save(pretrained_generator_file)
         print('Finished pre-training generator...')
     else:
-        generator.load("pretrained_models/pretrained_generator.h5")
+        generator.load(pretrained_generator_file)
 
-    if not os.path.exists("pretrained_models/pretrained_discriminator.h5"):
+    if not os.path.exists(pretrained_discriminator_file):
         print('Start pre-training discriminator...')
         for _ in range(50):
             print("Dataset", _)
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
             dis_dataset = discriminator_dataloader(positive_file, negative_file, BATCH_SIZE)
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
-        discriminator.save("pretrained_models/pretrained_discriminator.h5")
+        discriminator.save(pretrained_discriminator_file)
         print('Finished pre-training discriminator...')
     else:
-        discriminator.load("pretrained_models/pretrained_discriminator.h5")
+        discriminator.load(pretrained_discriminator_file)
 
     rollout = ROLLOUT(generator, 0.8)
 
@@ -52,7 +52,6 @@ if __name__ == "__main__":
 
     for epoch in range(EPOCH_NUM):
         print("Generator", epoch)
-        # Train the generator for one step
         for it in range(1):
             samples = generator.generate_one_batch()
             rewards = rollout.get_reward(samples, 16, discriminator)
@@ -60,13 +59,12 @@ if __name__ == "__main__":
 
         rollout.update_params()
 
-        # Train the discriminator
         print("Discriminator", epoch)
         for _ in range(5):
             generator.generate_samples(generated_num // BATCH_SIZE, negative_file)
             dis_dataset = discriminator_dataloader(positive_file, negative_file, BATCH_SIZE)
             discriminator.train(dis_dataset, 3, (generated_num // BATCH_SIZE) * 2)
-    generator.save("pretrained_models/generator.h5")
-    discriminator.save("pretrained_models/discriminator.h5")
+    generator.save(generator_file)
+    discriminator.save(discriminator_file)
 
-    generator.generate_samples(generated_num // BATCH_SIZE, output_file)
+    generator.generate_samples(generated_num // BATCH_SIZE, generated_file)

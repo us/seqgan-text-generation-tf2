@@ -36,7 +36,7 @@ def split_and_clean(data):
     for i in data:
         sentences = i.split('.')
         for s in sentences:
-            if 10 < len(s.split()) < 21:
+            if MIN_SEQ_LENGTH < len(s.split()) <= SEQ_LENGTH:
                 if s:
                     arr.append(s)
     for i, j in enumerate(arr):
@@ -62,11 +62,8 @@ def tokenize(arr):
     tensor = tokenizer.texts_to_sequences(arr)
     tensor = tf.keras.preprocessing.sequence.pad_sequences(tensor,
                                                            padding='post', maxlen=SEQ_LENGTH)
-
     dump_tokenizer(tokenizer)
     return tensor
-
-
 
 
 if __name__ == "__main__":
@@ -75,7 +72,6 @@ if __name__ == "__main__":
     df = df.review[:generated_num]
     d = split_and_clean(df)
     d = tokenize(d)
-    print(d.shape)
 
-    np.savetxt('dataset/positives.txt', d[:10000], delimiter=' ', fmt='%i')
-    np.savetxt('dataset/negatives.txt', d[10000:20000], delimiter=' ', fmt='%i')
+    np.savetxt('dataset/positives.txt', d[:generated_num], delimiter=' ', fmt='%i')
+    np.savetxt('dataset/negatives.txt', d[generated_num:(2 * generated_num)], delimiter=' ', fmt='%i')
